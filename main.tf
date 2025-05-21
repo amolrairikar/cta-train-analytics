@@ -33,7 +33,7 @@ module "spotify_project_data_bucket" {
 #   statement {
 #     effect    = "Allow"
 #     actions   = ["lambda:InvokeFunction"]
-#     resources = [module.spotify_get_recently_played_lambda.lambda_arn]
+#     resources = [module.cta_fetch_gtfs_lambda.lambda_arn]
 #   }
 # }
 
@@ -50,8 +50,8 @@ module "spotify_project_data_bucket" {
 # module "gtfs_lambda_eventbridge_scheduler" {
 #   source               = "git::https://github.com/amolrairikar/aws-account-infrastructure.git//modules/eventbridge-scheduler?ref=main"
 #   eventbridge_role_arn = module.eventbridge_role.role_arn
-#   lambda_arn           = module.spotify_get_recently_played_lambda.lambda_arn
-#   schedule_frequency   = "rate(1 hour)"
+#   lambda_arn           = module.cta_fetch_gtfs_lambda.lambda_arn
+#   schedule_frequency   = "rate(1 week)"
 #   schedule_timezone   = "America/Chicago"
 #   schedule_state       = "ENABLED"
 #   environment          = var.environment
