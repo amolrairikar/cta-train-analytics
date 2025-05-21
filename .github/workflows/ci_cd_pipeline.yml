@@ -1,0 +1,53 @@
+name: CTA Train Analytics CI/CD Pipeline
+
+on:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+
+    deploy_infrastructure:
+
+        runs-on: ubuntu-latest
+        env:
+            STATE_S3_BUCKET_NAME: ${{ secrets.STATE_S3_BUCKET_NAME }}
+            TF_VAR_infra_role_arn: ${{ secrets.TF_VAR_INFRA_ROLE_ARN }}
+            TF_VAR_account_number: ${{ secrets.AWS_ACCOUNT_ID }}
+            TF_VAR_email: ${{ secrets.EMAIL }}
+            TF_VAR_environment: "prod"
+            TF_VAR_project_name: "ctaTrainAnalytics"
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Set up AWS credentials
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                aws-region: 'us-east-2'
+
+            - name: Set up Terraform
+              uses: hashicorp/setup-terraform@v3
+        
+            - name: Initialize Terraform
+              run: |
+                echo "Initializing Terraform..."
+                terraform init \
+                -backend-config="bucket=${STATE_S3_BUCKET_NAME}" \
+                -backend-config="key=cta-train-analytics/terraform.tfstate" \
+                -backend-config="region=us-east-2" \
+                -backend-config="assume_role={role_arn=\"${TF_VAR_infra_role_arn}\", session_name=\"terraform-session\"}"
+
+            - name: Plan Terraform
+              run: |
+                  echo "Planning Terraform configuration..."
+                  terraform plan -out=tfplan
+        
+            - name: Apply Terraform
+              if: github.ref == 'refs/heads/main'
+              run: |
+                echo "Applying Terraform configuration..."
+                terraform apply -auto-approve tfplan
