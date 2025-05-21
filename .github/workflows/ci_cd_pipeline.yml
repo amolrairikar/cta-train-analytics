@@ -36,7 +36,7 @@ jobs:
               run: |
                 echo "Initializing Terraform..."
                 terraform init \
-                -backend-config="bucket=${S3_STATE_BUCKET_NAME}" \
+                -backend-config="bucket=${STATE_S3_BUCKET_NAME}" \
                 -backend-config="key=cta-train-analytics/terraform.tfstate" \
                 -backend-config="region=us-east-2" \
                 -backend-config="assume_role={role_arn=\"${TF_VAR_infra_role_arn}\", session_name=\"terraform-session\"}"
