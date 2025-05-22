@@ -1,4 +1,3 @@
-import datetime
 from functools import wraps
 import io
 import logging
@@ -30,11 +29,10 @@ def is_retryable_exception(e: botocore.exceptions.ClientError | requests.excepti
     if isinstance(e, botocore.exceptions.ClientError):
         return e.response['Error']['Code'] in [
             'InternalServerError'
-        ]
-    # CTA API error codes can be found at https://www.transitchicago.com/assets/1/6/cta_Train_Tracker_API_Developer_Guide_and_Documentation.pdf
+        ] 
     elif isinstance(e, requests.exceptions.HTTPError):
         return e.response.status_code in [
-            502, 503, 900
+            429, 500, 501, 502, 503, 504
         ]
     return False
 
@@ -93,7 +91,7 @@ def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 s3 = boto3.client('s3')
                 s3.put_object(
                     Bucket=os.environ['S3_BUCKET'],
-                    Key=f'{filename}_{datetime.datetime.now().isoformat()}',
+                    Key=filename,
                     Body=file_data
                 )
                 logger.info('Successfully wrote stops.txt to S3')
@@ -101,15 +99,4 @@ def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     'statusCode': 200,
                     'body': 'Download and save to S3 successful.'
                 }
-
-
-class MockLambdaContext:
-    """Mock class for AWS Lambda context."""
-
-    def __init__(self):
-        """Initializes mock Lambda context with constant attributes for tests."""
-        self.aws_request_id = 'test-request-id'
-        self.function_name = 'test-function-name'
-        self.function_version = 'test-function-version'
-event = {'test': 'test'}
-lambda_handler(event=event, context=MockLambdaContext())
+        raise Exception('Did not find stops.txt file')
