@@ -2,7 +2,7 @@
 
 # Run unit tests
 echo "Running unit tests..."
-if ! coverage run --source=src -m unittest discover -s tests/unit; then
+if ! coverage run --source=lambdas -m unittest discover -s tests/unit; then
     echo "Unit tests failed!"
     exit 1
 fi
@@ -10,7 +10,7 @@ mv .coverage .coverage.unit  # Move the coverage data to .coverage.unit
 
 # Run component tests
 echo "Running component tests..."
-if ! coverage run --source=src -m unittest discover -s tests/component; then
+if ! coverage run --source=lambdas -m unittest discover -s tests/component; then
     echo "Component tests failed!"
     exit 1
 fi
