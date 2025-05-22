@@ -35,6 +35,7 @@ jobs:
   deploy_infrastructure:
 
     runs-on: ubuntu-latest
+    needs: run_tests_and_get_coverage
     env:
       STATE_S3_BUCKET_NAME: ${{ secrets.STATE_S3_BUCKET_NAME }}
       TF_VAR_infra_role_arn: ${{ secrets.TF_VAR_INFRA_ROLE_ARN }}
