@@ -2,6 +2,9 @@
 
 # Usage: ./create_lambda.sh <function_name> <handler_filename> <source_path>
 
+# Set script to fail on error
+set -e
+
 # Extract arguments
 FUNCTION_NAME=$1
 HANDLER_FILENAME=$2
