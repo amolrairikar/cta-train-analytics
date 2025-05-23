@@ -87,6 +87,7 @@ jobs:
       TF_VAR_account_number: ${{ secrets.AWS_ACCOUNT_ID }}
       TF_VAR_email: ${{ secrets.EMAIL }}
       TF_VAR_environment: "prod"
+      TF_VAR_lambda_error_sns_topic_arn: ${{ secrets.TF_VAR_LAMBDA_ERROR_SNS_TOPIC_ARN }}
       TF_VAR_project_name: "ctaTrainAnalytics"
     steps:
       - name: Checkout code

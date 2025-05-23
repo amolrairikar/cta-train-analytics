@@ -22,3 +22,8 @@ variable "project_name" {
   description = "The name of the project (to be used in tags)"
   type        = string
 }
+
+variable "lambda_error_sns_topic_arn" {
+  description = "The ARN of the SNS topic to send notifications of Lambda failures"
+  type        = string
+}

@@ -89,7 +89,7 @@ data "aws_iam_policy_document" "lambda_get_get_gtfs_data_execution_role_inline_p
       "sns:Publish"
     ]
     resources = [
-      module.sns_email_subscription.topic_arn
+      var.lambda_error_sns_topic_arn
     ]
   }
   statement {
@@ -125,8 +125,8 @@ module "get_gtfs_data_lambda" {
   lambda_handler                 = "main.lambda_handler"
   lambda_memory_size             = "256"
   lambda_runtime                 = "python3.12"
-  lambda_execution_role_arn      = module.lambda_get_recently_played_role.role_arn
-  sns_topic_arn                  = module.sns_email_subscription.topic_arn
+  lambda_execution_role_arn      = module.lambda_get_gtfs_data_played_role.role_arn
+  sns_topic_arn                  = var.lambda_error_sns_topic_arn
     lambda_environment_variables = {
       S3_BUCKET = module.cta_train_analytics_project_data_bucket.bucket_id
   }
