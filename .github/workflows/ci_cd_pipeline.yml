@@ -77,6 +77,12 @@ jobs:
       - name: Print contents of lambda directory
         run: ls -la "${{ matrix.lambda.source_path }}"
 
+      - name: Upload Lambda zip as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: upload-${{ matrix.lambda.function_name }}-zip
+          path: "${{ matrix.lambda.source_path }}/${{ matrix.lambda.function_name }}.zip"
+
   deploy_infrastructure:
 
     runs-on: ubuntu-latest
@@ -87,6 +93,7 @@ jobs:
       TF_VAR_account_number: ${{ secrets.AWS_ACCOUNT_ID }}
       TF_VAR_email: ${{ secrets.EMAIL }}
       TF_VAR_environment: "prod"
+      TF_VAR_lambda_error_sns_topic_arn: ${{ secrets.TF_VAR_LAMBDA_ERROR_SNS_TOPIC_ARN }}
       TF_VAR_project_name: "ctaTrainAnalytics"
     steps:
       - name: Checkout code
@@ -98,6 +105,15 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: 'us-east-2'
+
+      - name: Download all Lambda zip artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./downloaded-lambdas
+
+      - name: Move all zip files to root directory
+        run: |
+          find downloaded-lambdas -name '*.zip' -exec mv {} . \;
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
