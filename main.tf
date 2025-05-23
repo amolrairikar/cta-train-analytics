@@ -121,7 +121,7 @@ module "get_gtfs_data_lambda" {
   project                        = var.project_name
   lambda_name                    = "get-gtfs-data-lambda"
   lambda_description             = "Lambda function to fetch GTFS data from CTA"
-  lambda_filename                = "get_gtfs_data.zip"
+  lambda_filename                = "lambdas/get_gtfs_data/get_gtfs_data.zip"
   lambda_handler                 = "main.lambda_handler"
   lambda_memory_size             = "256"
   lambda_runtime                 = "python3.12"
