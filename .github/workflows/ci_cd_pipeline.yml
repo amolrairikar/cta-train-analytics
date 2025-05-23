@@ -32,10 +32,58 @@ jobs:
       - name: Run unit and component tests
         run: ./pipeline_scripts/run_tests.sh
 
-  deploy_infrastructure:
+  zip_lambdas:
 
     runs-on: ubuntu-latest
     needs: run_tests_and_get_coverage
+    strategy:
+      matrix:
+        lambda:
+          - function_name: get_gtfs_data
+            handler_filename: main.py
+            source_path: ./lambda1
+          # - function_name: func2
+          #   handler_filename: main.py
+          #   source_path: ./lambda2
+          # - function_name: func3
+          #   handler_filename: main.py
+          #   source_path: ./lambda3
+          # - function_name: func4
+          #   handler_filename: main.py
+          #   source_path: ./lambda4
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Install zip
+        run: sudo apt-get install zip -y
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+    
+      - name: Make the zip lambdas script executable
+        run: chmod +x pipeline_scripts/zip_lambda.sh
+
+      - name: Run script to zip lambda
+        run: |
+          ./pipeline_scripts/create_lambda.sh \
+            "${{ matrix.lambda.function_name }}" \
+            "${{ matrix.lambda.handler_filename }}" \
+            "${{ matrix.lambda.source_path }}"
+        
+      - name: Print contents of lambda directory
+        run: ls -la lambdas/get_gtfs_data
+
+      - name: Print contents of root directory
+        run: ls -la
+
+  deploy_infrastructure:
+
+    runs-on: ubuntu-latest
+    needs: zip_lambdas
     env:
       STATE_S3_BUCKET_NAME: ${{ secrets.STATE_S3_BUCKET_NAME }}
       TF_VAR_infra_role_arn: ${{ secrets.TF_VAR_INFRA_ROLE_ARN }}
