@@ -69,7 +69,7 @@ jobs:
 
       - name: Run script to zip lambda
         run: |
-          ./pipeline_scripts/create_lambda.sh \
+          ./pipeline_scripts/zip_lambda.sh \
             "${{ matrix.lambda.function_name }}" \
             "${{ matrix.lambda.handler_filename }}" \
             "${{ matrix.lambda.source_path }}"
