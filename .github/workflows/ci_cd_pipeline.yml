@@ -41,7 +41,7 @@ jobs:
         lambda:
           - function_name: get_gtfs_data
             handler_filename: main.py
-            source_path: ./lambda1
+            source_path: ./lambdas/get_gtfs_data
           # - function_name: func2
           #   handler_filename: main.py
           #   source_path: ./lambda2
