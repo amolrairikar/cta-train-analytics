@@ -53,7 +53,7 @@ module "gtfs_lambda_eventbridge_scheduler" {
   source               = "git::https://github.com/amolrairikar/aws-account-infrastructure.git//modules/eventbridge-scheduler?ref=main"
   eventbridge_role_arn = module.eventbridge_role.role_arn
   lambda_arn           = module.get_gtfs_data_lambda.lambda_arn
-  schedule_frequency   = "cron(1 0 * * 0 *)"  # Every week on Sunday at 12:01 AM
+  schedule_frequency   = "rate(1 week)"
   schedule_timezone   = "America/Chicago"
   schedule_state       = "ENABLED"
   environment          = var.environment
