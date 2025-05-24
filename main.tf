@@ -125,6 +125,7 @@ module "get_gtfs_data_lambda" {
   lambda_handler                 = "main.lambda_handler"
   lambda_memory_size             = "256"
   lambda_runtime                 = "python3.12"
+  lambda_timeout                 = 60
   lambda_execution_role_arn      = module.lambda_get_gtfs_data_played_role.role_arn
   sns_topic_arn                  = var.lambda_error_sns_topic_arn
     lambda_environment_variables = {
